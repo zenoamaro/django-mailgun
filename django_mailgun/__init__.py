@@ -2,6 +2,7 @@ import requests
 from django.conf import settings
 from django.core.mail.backends.base import BaseEmailBackend
 from django.core.mail.message import sanitize_address
+from django.utils import six
 
 try:
     from io import StringIO
@@ -21,9 +22,9 @@ class MailgunBackend(BaseEmailBackend):
     def __init__(self, fail_silently=False, *args, **kwargs):
         access_key, server_name = (kwargs.pop('access_key', None),
                                    kwargs.pop('server_name', None))
-    
+
         super(MailgunBackend, self).__init__(
-                        fail_silently=fail_silently, 
+                        fail_silently=fail_silently,
                         *args, **kwargs)
 
         try:
@@ -54,6 +55,7 @@ class MailgunBackend(BaseEmailBackend):
         from_email = sanitize_address(email_message.from_email, email_message.encoding)
         recipients = [sanitize_address(addr, email_message.encoding)
                       for addr in email_message.recipients()]
+        message = email_message.message().as_string()
 
         try:
             r = requests.\
@@ -64,7 +66,7 @@ class MailgunBackend(BaseEmailBackend):
                             "from": from_email,
                          },
                      files={
-                            "message": StringIO(email_message.message().as_string()),
+                            "message": six.StringIO(message),
                          }
                      )
         except:
