@@ -21,9 +21,9 @@ class MailgunBackend(BaseEmailBackend):
     def __init__(self, fail_silently=False, *args, **kwargs):
         access_key, server_name = (kwargs.pop('access_key', None),
                                    kwargs.pop('server_name', None))
-    
+
         super(MailgunBackend, self).__init__(
-                        fail_silently=fail_silently, 
+                        fail_silently=fail_silently,
                         *args, **kwargs)
 
         try:
@@ -35,7 +35,7 @@ class MailgunBackend(BaseEmailBackend):
             else:
                 raise
 
-        self._api_url = "https://api.mailgun.net/v2/%s/" % self._server_name
+        self._api_url = "https://api.mailgun.net/v3/%s/" % self._server_name
 
     def open(self):
         """Stub for open connection, all sends are done over HTTP POSTs
